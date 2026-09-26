@@ -8,7 +8,7 @@ One JavaScript file. Drop it on a page, no build.
 
 Keep it for rare highlights: a release note, a new section. A page full of them stops reading as emphasis.
 
-[Example](example.html)
+[Example](https://myhd.github.io/glimlet/)
 
 ## Use
 
