@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Glimlet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <script src="glimlet.js"></script>
+  <style>
+    :root {
+      --paper: oklch(0.97 0.012 255);
+      --ink: #192548;
+      --mute: oklch(0.52 0.03 255);
+      --rule: oklch(0.86 0.02 255);
+      --code-bg: oklch(0.99 0.008 255);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 18px/1.55 Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+
+    main {
+      width: min(34rem, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 18vh 0 6rem;
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      margin: 0;
+      font: 700 1.15rem/1 Inter, ui-sans-serif, system-ui, sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    button {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--mute);
+      font: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--ink); }
+
+    button:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    .motion-note {
+      display: none;
+      margin: 0 0 1.5rem;
+      color: #6a4a10;
+      font-size: 0.9rem;
+    }
+
+    .motion-note.is-on { display: block; }
+
+    p { margin: 0 0 1.1rem; }
+
+    .lede {
+      font-size: 1.35rem;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+    }
+
+    .quiet {
+      margin-bottom: 0;
+      color: var(--mute);
+      font-size: 1rem;
+    }
+
+    .code {
+      position: relative;
+      margin: 2.25rem 0 0;
+      border-top: 1px solid var(--rule);
+      background: var(--code-bg);
+    }
+
+    .code pre {
+      margin: 0;
+      padding: 1rem 2.6rem 1rem 1.1rem;
+      overflow: auto;
+      font: 13px/1.5 ui-monospace, "SFMono-Regular", Menlo, monospace;
+    }
+
+    .copy {
+      position: absolute;
+      top: 0.55rem;
+      right: 0.55rem;
+      display: grid;
+      place-items: center;
+      width: 1.85rem;
+      height: 1.85rem;
+      border-radius: 6px;
+      color: var(--mute);
+      transition: color 120ms ease, background-color 120ms ease;
+    }
+
+    .copy:hover {
+      color: var(--ink);
+      background: oklch(0.94 0.015 255);
+    }
+
+    .copy:active,
+    .copy.is-pressed {
+      color: var(--ink);
+      background: oklch(0.9 0.02 255);
+      transform: scale(0.94);
+    }
+
+    .copy svg {
+      grid-area: 1 / 1;
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+
+    .copy .icon-check { opacity: 0; }
+    .copy.is-copied .icon-copy { opacity: 0; }
+    .copy.is-copied .icon-check { opacity: 1; }
+    .copy.is-copied {
+      color: var(--ink);
+      background: oklch(0.94 0.015 255);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Glimlet</h1>
+      <button type="button" id="again">Again</button>
+    </header>
+
+    <p class="motion-note" id="motion-note">
+      Reduce motion is on. The badge won’t animate.
+      Turn that off under Accessibility → Display, then reload.
+    </p>
+
+    <p class="lede">Release notes <glimlet-badge>NEW</glimlet-badge></p>
+    <p class="quiet">Hidden until it is on screen.</p>
+
+    <div class="code">
+      <button type="button" class="copy" id="copy" aria-label="Copy to clipboard" title="Copy">
+        <svg class="icon-copy" viewBox="0 0 16 16" aria-hidden="true">
+          <path fill="none" stroke="currentColor" stroke-width="1.4" d="M5.5 4.5h7v9h-7z"/>
+          <path fill="none" stroke="currentColor" stroke-width="1.4" d="M3.5 11.5v-9h7"/>
+        </svg>
+        <svg class="icon-check" viewBox="0 0 16 16" aria-hidden="true">
+          <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3.5 8.5 6.5 11.5 12.5 4.5"/>
+        </svg>
+      </button>
+      <pre><code id="snippet">&lt;script src="glimlet.js"&gt;&lt;/script&gt;
+&lt;glimlet-badge&gt;NEW&lt;/glimlet-badge&gt;</code></pre>
+    </div>
+  </main>
+  <script>
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.getElementById("motion-note").classList.add("is-on");
+    }
+
+    // Pastels that sit above the cool paper without washing out, with dark ink.
+    const variants = [
+      { text: "NEW", fill: "oklch(0.82 0.055 255)", ink: "#192548" },
+      { text: "BETA", fill: "oklch(0.86 0.055 300)", ink: "#321452" },
+      { text: "SOON", fill: "oklch(0.88 0.055 160)", ink: "#14352c" },
+      { text: "LIVE", fill: "oklch(0.87 0.06 40)", ink: "#4a2814" },
+      { text: "NEXT", fill: "oklch(0.86 0.055 20)", ink: "#4a1c28" }
+    ];
+    let index = 0;
+
+    document.getElementById("again").addEventListener("click", () => {
+      index = (index + 1) % variants.length;
+      const next = variants[index];
+      const badge = document.createElement("glimlet-badge");
+      badge.textContent = next.text;
+      badge.setAttribute("fill", next.fill);
+      badge.setAttribute("ink", next.ink);
+      document.querySelector("glimlet-badge").replaceWith(badge);
+    });
+
+    const copy = document.getElementById("copy");
+    const snippet = document.getElementById("snippet");
+    let copyTimer = 0;
+
+    async function writeClipboard(text) {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.append(area);
+      area.select();
+      document.execCommand("copy");
+      area.remove();
+    }
+
+    function markCopied() {
+      copy.classList.add("is-copied");
+      copy.setAttribute("aria-label", "Copied");
+      copy.title = "Copied";
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(() => {
+        copy.classList.remove("is-copied");
+        copy.setAttribute("aria-label", "Copy to clipboard");
+        copy.title = "Copy";
+      }, 1400);
+    }
+
+    copy.addEventListener("pointerdown", () => {
+      copy.classList.add("is-pressed");
+    });
+    copy.addEventListener("pointerup", () => {
+      copy.classList.remove("is-pressed");
+    });
+    copy.addEventListener("pointerleave", () => {
+      copy.classList.remove("is-pressed");
+    });
+    copy.addEventListener("click", async () => {
+      try {
+        await writeClipboard(snippet.textContent);
+        markCopied();
+      } catch {
+        // Keep the press flash; nothing else to show if copy failed.
+      }
+    });
+  </script>
+</body>
+</html>
